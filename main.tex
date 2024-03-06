@@ -4,6 +4,9 @@
 \usepackage{xcolor} % for colored text
 \usepackage{graphicx} % for including graphics
 \usepackage{amsmath} % for advanced math features
+\usepackage{float}
+\usepackage{amssymb}
+\usepackage{amsthm}
 
 \title{CS529 Project 1 Report - Group 15}
 \vspace{3cm}
@@ -20,13 +23,79 @@
 
 \maketitle
 
-\section{Discussion on the different options for split criteria}
+\section{Data}
+\subsection{Data Overview}
+The dataset is a 472432 $\times$ 27 matrix, 472432 records and 27 features (columns). Among 27 features, there are 25 explanatory features, 1 target feature ("isFraud"), 1 index feature ("TransactionID"). Except the target feature and index feature, the rest 25 features are classified as numerical or categorical (Table 1).
 
+\begin{table}[H]
+    \centering
+    \resizebox{1 \textwidth}{!}{
+        
+        \begin{tabular}{r|r|r|r|r}
+            Feature & Numerical & Categorical & \# of Unique values & \% of missing values \\\hline
+            ProductCD& & \checkmark & 5 & 0\\
+            card1& &\checkmark &12815 & 0\\
+            card2& &\checkmark &501 & 1.52\\
+            card3& &\checkmark &112 & 0.27\\
+            card4& &\checkmark &5 & 0.27\\
+            card5& &\checkmark &115 & 0.72\\
+            card6& &\checkmark &5 & 0.27\\
+            addr1& &\checkmark &304 & 11.09\\
+            addr2& &\checkmark &72 & 11.09\\
+            c1&\checkmark &&1350 & 0\\
+            c2&\checkmark &&1064 & 0\\
+            c3&\checkmark &&21 & 0\\
+            c4&\checkmark &&1078 & 0\\
+            c5&\checkmark &&319 & 0\\
+            c6&\checkmark &&1158 & 0\\
+            c7&\checkmark &&914 & 0\\
+            c8&\checkmark &&1002 & 0\\
+            c9&\checkmark &&204 & 0\\
+            c10&\checkmark &&987 & 0\\
+            c11&\checkmark &&1210 & 0\\
+            c12&\checkmark &&927 & 0\\
+            c13&\checkmark &&1393 & 0\\
+            c14&\checkmark &&1018 & 0\\
+            TransactionAmt&\checkmark &&7898 & 0\\
+            TransactionDT&\checkmark &&461340 & 0\\
+        \end{tabular}
+    }
+    \caption{\label{tab:1} Data overview}
+\end{table}
+'TransactionDT' has 461340 unique values in our dataset (Table 1), indicating 'TransactionDT' should not be used in the decision tree (DT). Same reason from Micheal's book, 'TransactionDT' can cause a highly over-fitting tree. In fact, 'TransactionDT' is the date of transaction, usually meaningless for determining whether the transaction is fraud or not. Although an organization is faking the transaction in a particular day may happen in some cases, we don't take that situation into consideration. We will ignore 'TransactionDT' when building our Random Forest (RF).
 
-\subsection{Categorical Data}
-\begin{verbatim}
-['ProductCD', 'card1', 'card2', 'card3', 'card4', 'card5', 'card6', 'addr1', 'addr2']
-\end{verbatim}
+\subsection{Records with "NaN"}
+Some records have missing values for a certain feature. Table 2 gives out how many records have missing values in each feature. For example, there are 11.09\% of records have missing values in "addr2" feature.\\
+Two strategies were applied in the training phase.
+\begin{enumerate}
+    \item Remove records
+    \\We removed the record if any of its features has a missing value. After the data cleaning, we had 87.17\% records left for use. Obviously, this strategy resulted in less data in the training phase, which affected the performance of RF.
+    \item Simulate feature value
+    \\For the record with a missing feature, we will assign it with the most common feature value from the rest of the dataset. 
+\end{enumerate}
+In testing phase, we are using a different strategy. We will try every possible values and gave predictions, among which we select the most frequent one as our final prediction. This is the same strategy we are using when the DT sees an un-seen feature value in training pahse.\\\\
+For example, given a tree and a to-be-predicted record (Fig 1). The root node of this DT is "ProductCD" with 4 sub-branches. Only branches "W" and "D" has a child-node "C1" and "card1" respectively. In the training phase, This DT only sees "5812", "4472" and "9633" for "card1" feature.\\\\  
+In the to-be-predicted record, the feature "ProductCD" is a missing value ("NaN"), "C1" is 50 and "card1" is "17399" (other features are ignored in this example). When the DT do the prediction, it will first scan the value of "ProductCD". Becasue it is "NaN", so it will travelse each sub-branch. 
+\begin{itemize}
+    \item \textbf{sub-branch 1} $ProductCD = W \land C1 = 50\rightarrow Target = Fraud$
+    \item \textbf{sub-branch 2} $ProductCD = H \rightarrow Target = Fraud$
+    \item \textbf{sub-branch 3} $ProductCD = R \rightarrow Target = NotFraud$
+    \item \textbf{sub-branch 4} $ProductCD = D \land$
+    \begin{itemize}
+        \item \textbf{sub-branch 4.1} $card1 = 5812 \rightarrow Target = Fraud$
+        \item \textbf{sub-branch 4.2} $card1 = 4472 \rightarrow Target = NotFraud$
+        \item \textbf{sub-branch 4.3} $card1 = 9633 \rightarrow Target = NotFraud$
+    \end{itemize}
+\end{itemize}
+Because this DT never sees the value of "card1 = 17399" in the training phase, it will travelse every possible values in sub-branch under the node "card1". \\\\
+In the end this DT predicts a list of potential values as [Fraud, Fraud, NotFraud, Fraud, NotFraud, NotFraud]. We have 3 "Fraud" and 3 "NotFraud". Because the number of times "Fraud" occurred was at least half, we assign the final prediction as "Fraud" ("NotFraud" less than half time).
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=1\linewidth]{Fig/NaN_test.jpeg}
+  \caption{\label{fig:1}A demo of 1 DT and 1 record}
+\end{figure}
+
 
 \subsection{Numerical Data}
 \begin{verbatim}
@@ -85,7 +154,7 @@ This function has two possible returns:
 
 \section{Discussion on the different values for $\alpha$ in chi square}
 
-$\alpha$ represents the significance level as probability that a hypothesis is rejected when it is actually true. The common value for $\alpha$ is 0.05 which means if the probability of the value is less than 5\%, the null hypothesis is rejected and there is a statistical significance between the data which has been observed and frequencies which are expected.
+$\alpha$ represents the significance level as the probability that a hypothesis is rejected when it is actually true. The common value for $\alpha$ is 0.05 which means if the probability of the value is less than 5\%, the null hypothesis is rejected and there is a statistical significance between the data that has been observed and frequencies that are expected.
 
 
 
