@@ -1,0 +1,97 @@
+\documentclass{article}
+\usepackage{graphicx} % Required for inserting images
+\usepackage[ruled,vlined]{algorithm2e}
+\usepackage{xcolor} % for colored text
+\usepackage{graphicx} % for including graphics
+\usepackage{amsmath} % for advanced math features
+
+\title{CS529 Project 1 Report - Group 15}
+\vspace{3cm}
+\author{%
+    \begin{tabular}[t]{c@{\hskip 2em}c} % Two columns with some space in between
+        Behnoud Alaghband & Zhuoming Liu  \\
+        University of New Mexico & University of New Mexico \\
+        \texttt{balaghband@unm.edu} & \texttt{dawnmoon@unm.edu}
+    \end{tabular}
+}
+
+
+\begin{document}
+
+\maketitle
+
+\section{Discussion on the different options for split criteria}
+
+
+\subsection{Categorical Data}
+\begin{verbatim}
+['ProductCD', 'card1', 'card2', 'card3', 'card4', 'card5', 'card6', 'addr1', 'addr2']
+\end{verbatim}
+
+\subsection{Numerical Data}
+\begin{verbatim}
+['C1', 'C10', 'C11', 'C12', 'C13', 'C14', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 
+'C8', 'C9', 'TransactionAmt', 'TransactionDT', 'isFraud']
+\end{verbatim}
+
+we calculate information gain by Info-Gain function :
+
+\begin{algorithm}[H]
+\SetAlgoLined
+\KwIn{Input\_Dataframe, Split\_feature, IG\_methods, Num\_Cat}
+\KwOut{Information Gain}
+\KwResult{Calculate Information Gain based on the given parameters}
+
+\SetKwFunction{InfoGain}{Info\_Gain}
+\SetKwProg{Fn}{Function}{:}{}
+
+\Fn{\InfoGain{Input\_Dataframe, Split\_feature, IG\_methods, Num\_Cat}}{
+    % Function body
+}
+
+\caption{Info\_Gain function}
+\end{algorithm}
+
+\textbf{Information gain function}
+
+\begin{center}
+\begin{tabular}{|c|c|p{7cm}|}
+\hline
+\textbf{Input Variable} & \textbf{Type} & \textbf{Definition} \\
+\hline
+\textcolor{green}{Input\_Dataframe} & \texttt{pandas.DataFrame} & This is your chosen subset of training data \\
+\textcolor{green}{Split\_feature} & \texttt{String} & The chosen feature for calculating Information gain \\
+\textcolor{green}{IG\_methods} & \texttt{String} & Three options: \textcolor{red}{Gini} for Gini index, \textcolor{red}{Entropy} for Max Entropy, \textcolor{red}{MisEr} for Miss classification\\
+\textcolor{green}{Num\_Cat} & \texttt{String} & Two options: \textcolor{red}{Num} for a numeric feature, \textcolor{red}{Cat} for a categorical feature \\
+\hline
+\end{tabular}
+\end{center}
+
+This function has two possible returns: 
+
+\begin{itemize}
+    \item \textcolor{red}{[IG\_feature, Split point]}: if \textcolor{green}{Split\_feature} is a \textbf{numeric} feature
+        \begin{itemize}
+            \item \textbf{IG\_feature}: single float variable representing \textbf{Information Gain} of \textcolor{green}{Split\_feature}
+            \item \textbf{Split point}: single float variable, the best binary split point for this numeric feature \textcolor{green}{Split\_feature}
+        \end{itemize}
+    \item \textcolor{red}{[IG\_feature, -3.14]}: if \textcolor{green}{Split\_feature} is a \textbf{categorical} feature
+        \begin{itemize}
+            \item \textbf{IG\_feature}: same as previous
+            \item \textbf{-3.14}: Meaningless, and not to be used in the future. Just to make this function work recursively.
+        \end{itemize}
+\end{itemize}
+
+
+\section{Discussion on the different values for $\alpha$ in chi square}
+
+$\alpha$ represents the significance level as probability that a hypothesis is rejected when it is actually true. The common value for $\alpha$ is 0.05 which means if the probability of the value is less than 5\%, the null hypothesis is rejected and there is a statistical significance between the data which has been observed and frequencies which are expected.
+
+
+
+\section{Discussion wrt design decisions for: missing data, numerical features, class imbalance}
+\section{Interpreting the results and provides insights into the various model performance}
+\section{Insights into the relationship between features and the target variable}
+
+
+\end{document}
