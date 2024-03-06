@@ -69,10 +69,11 @@ Some records have missing values for a certain feature. Table 2 gives out how ma
 Two strategies were applied in the training phase.
 \begin{enumerate}
     \item Remove records
-    \\We removed the record if any of its features has a missing value. After the data cleaning, we had 87.17\% records left for use. Obviously, this strategy resulted in less data in the training phase, which affected the performance of RF.
+    \\We removed the record if any of its features has a missing value. After the data cleaning, we had 87.17\% records left for use. Obviously, this strategy is very easy for implementation, but it resulted in less data in the training phase, which affected the performance of RF.
     \item Simulate feature value
-    \\For the record with a missing feature, we will assign it with the most common feature value from the rest of the dataset. 
+    \\For the record with a missing feature, we will assign it with the most common feature value from the rest of the dataset. This can keep our records as much as possible. And We won't waste those useful information from the records with missing values. Actually based on Table 1, we can simulate an extremely worst case -- one record has 7 missing feature values (card2 -card6, addr1, addr2). The rest 18 features contain useful information still.
 \end{enumerate}
+Among these 2 strategies, we prefer to use the $2^{nd}$ one.\\\\
 In testing phase, we are using a different strategy. We will try every possible values and gave predictions, among which we select the most frequent one as our final prediction. This is the same strategy we are using when the DT sees an un-seen feature value in training pahse.\\\\
 For example, given a tree and a to-be-predicted record (Fig 1). The root node of this DT is "ProductCD" with 4 sub-branches. Only branches "W" and "D" has a child-node "C1" and "card1" respectively. In the training phase, This DT only sees "5812", "4472" and "9633" for "card1" feature.\\\\  
 In the to-be-predicted record, the feature "ProductCD" is a missing value ("NaN"), "C1" is 50 and "card1" is "17399" (other features are ignored in this example). When the DT do the prediction, it will first scan the value of "ProductCD". Becasue it is "NaN", so it will travelse each sub-branch. 
@@ -154,7 +155,8 @@ This function has two possible returns:
 
 \section{Discussion on the different values for $\alpha$ in chi square}
 
-$\alpha$ represents the significance level as the probability that a hypothesis is rejected when it is actually true. The common value for $\alpha$ is 0.05 which means if the probability of the value is less than 5\%, the null hypothesis is rejected and there is a statistical significance between the data that has been observed and frequencies that are expected.
+$\alpha$ represents the significance level as the probability that a hypothesis is rejected when it is true. The common value for $\alpha$ is 0.05 which means if the probability of the value is less than 5\%, the null hypothesis is rejected and there is a statistical significance between the data that has been observed and frequencies that are expected. If $\alpha$ is 0.01, it means the probability that a true null hypothesis is rejected is decreased but otherwise, the probability that a false bull hypothesis is not being rejected increases. 
+In our project, we have $\alpha$ as 0.05 and we have chosen feature classes based on the unique value 
 
 
 

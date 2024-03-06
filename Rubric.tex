@@ -1,0 +1,405 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+]{article}
+\usepackage{amsmath,amssymb}
+\usepackage{lmodern}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math}
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\usepackage[normalem]{ulem}
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\ifLuaTeX
+  \usepackage{selnolig}  % disable illegal ligatures
+\fi
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same} % disable monospaced font for URLs
+\hypersetup{
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+
+\author{}
+\date{}
+
+\begin{document}
+
+\hypertarget{project-1-rubric-100-points}{%
+\section{PROJECT 1 RUBRIC (100
+points)}\label{project-1-rubric-100-points}}
+
+\textbf{\uline{Deliverables (10 points)}}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  \begin{quote}
+  (2 point) Report must be PDF. Report will not be graded otherwise.
+  \end{quote}
+\item
+  \begin{quote}
+  (2 point) Code packaged in archive (tar or zip); no github links, do
+  not include the dataset..
+  \end{quote}
+
+  \begin{enumerate}
+  \def\labelenumii{\alph{enumii}.}
+  \item
+    \begin{quote}
+    Include README; at a minimum, describe how to run code and where to
+    specify path to the dataset.
+    \end{quote}
+
+    \begin{enumerate}
+    \def\labelenumiii{\roman{enumiii}.}
+    \item
+      \begin{quote}
+      (2 points) (File manifest :: describe each file (one sentence)
+      \end{quote}
+    \item
+      \begin{quote}
+      (2 points) Team names; contributions from each member
+      \end{quote}
+    \item
+      \begin{quote}
+      (2 points) Kaggle score, accuracy, and date run
+      \end{quote}
+    \end{enumerate}
+  \end{enumerate}
+\end{enumerate}
+
+\textbf{\uline{Code (35 points)}}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  \begin{quote}
+  (5 points) Clean code: are there comments, descriptive variable names
+  and function names?
+  \end{quote}
+
+  \begin{enumerate}
+  \def\labelenumii{\alph{enumii}.}
+  \item
+    \begin{quote}
+    If any of the above are missing, 0 points.
+    \end{quote}
+  \item
+    \begin{quote}
+    If they're there but not helpful, 2.5 points.
+    \end{quote}
+  \item
+    \begin{quote}
+    If all are included, and if it helps make the code readable, then 5
+    points.
+    \end{quote}
+  \end{enumerate}
+\item
+  \begin{quote}
+  (10 points) Are the entropy, gini-index, and misclassification-error
+  functions implemented correctly?
+  \end{quote}
+
+  \begin{enumerate}
+  \def\labelenumii{\alph{enumii}.}
+  \item
+    \begin{quote}
+    If they're all implemented, regardless of correctness, grant 1
+    point.
+    \end{quote}
+  \item
+    \begin{quote}
+    For each, grant 0 points if implemented incorrectly.
+    \end{quote}
+  \item
+    \begin{quote}
+    For each, grant 0 points if not implemented themselves (e.g.
+    external library)
+    \end{quote}
+  \item
+    \begin{quote}
+    For each, grant 1.5 points if documented correctly, but implemented
+    incorrectly.
+    \end{quote}
+  \item
+    \begin{quote}
+    For each, grant 3 points if implemented correctly.
+    \end{quote}
+  \end{enumerate}
+\item
+  \begin{quote}
+  (10 points) Is the decision tree implemented correctly?
+  \end{quote}
+
+  \begin{enumerate}
+  \def\labelenumii{\alph{enumii}.}
+  \item
+    \begin{quote}
+    Use of information gain as split criterium? Implemented correctly?
+    \end{quote}
+  \item
+    \begin{quote}
+    Use of chi-square test for termination? Implemented correctly?
+    \end{quote}
+  \item
+    \begin{quote}
+    For each, grant 0 points if implemented incorrectly.
+    \end{quote}
+  \item
+    \begin{quote}
+    For each, grant 0 points if not implemented themselves (e.g.
+    external library)
+    \end{quote}
+  \item
+    \begin{quote}
+    For each, grant 2.5 points if documented correctly, but implemented
+    correctly.
+    \end{quote}
+  \item
+    \begin{quote}
+    For each, grant 5 points if implemented correctly.
+    \end{quote}
+  \end{enumerate}
+\item
+  \begin{quote}
+  (10 points) Is the random forest implemented correctly?
+  \end{quote}
+
+  \begin{enumerate}
+  \def\labelenumii{\alph{enumii}.}
+  \item
+    \begin{quote}
+    (3 points) Make use of implemented decision tree (required)
+    \end{quote}
+  \item
+    \begin{quote}
+    (3 points) Split data to feed into different trees
+    \end{quote}
+  \item
+    \begin{quote}
+    (3 points) Consensus (what is the consensus mechanism) (required)
+    \end{quote}
+  \item
+    \begin{quote}
+    If they're all implemented, regardless of correctness, grant 1
+    point.
+    \end{quote}
+  \item
+    \begin{quote}
+    For each, grant 0 points if implemented incorrectly (or missing).
+    \end{quote}
+  \item
+    \begin{quote}
+    For each, grant 0 points if not implemented themselves (e.g. using
+    external library)
+    \end{quote}
+  \item
+    \begin{quote}
+    For each, grant 1.5 points for split data if there but not correct.
+    \end{quote}
+  \item
+    \begin{quote}
+    For each, grant 3 points if implemented correctly.
+    \end{quote}
+  \end{enumerate}
+\end{enumerate}
+
+\textbf{\uline{Analysis (55 points)}}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  \begin{quote}
+  (10 points) What is the difference between the resulting trees that
+  each IG method produced? Compare and contrast in terms of accuracy and
+  structure.
+  \end{quote}
+
+  \begin{enumerate}
+  \def\labelenumii{\alph{enumii}.}
+  \item
+    \begin{quote}
+    No answer/wrong answer - 0
+    \end{quote}
+  \item
+    \begin{quote}
+    Barely there answer (missing the metrics overall or no
+    plots/visualization or one of the IG methods is missing) - 50\%
+    \end{quote}
+  \item
+    \begin{quote}
+    Lacking an element (one of the metrics or shallow metrics) - 80\%
+    \end{quote}
+  \item
+    \begin{quote}
+    Compare and contrasting accuracy and structure, with some plots as
+    well. - 100\%
+    \end{quote}
+  \end{enumerate}
+\item
+  \begin{quote}
+  (10 points) How did the value of alpha affect Chi Square termination?
+  Compare and contrast in terms of accuracy and structure.
+  \end{quote}
+
+  \begin{enumerate}
+  \def\labelenumii{\alph{enumii}.}
+  \item
+    \begin{quote}
+    No answer/wrong answer - 0
+    \end{quote}
+  \item
+    \begin{quote}
+    Barely there answer (missing the metrics overall or no
+    plots/visualization or missing multiple alphas) - 50\%
+    \end{quote}
+  \item
+    \begin{quote}
+    Lacking an element (one of the metrics or shallow metrics or one of
+    the alpha values is missing) - 80\%
+    \end{quote}
+  \item
+    \begin{quote}
+    Compare and contrasting accuracy and structure, with some plots as
+    well. - 100\%
+    \end{quote}
+  \end{enumerate}
+\item
+  \begin{quote}
+  (5 points) Which Information Gain Criteria method did you choose for
+  your Final (kaggle submission) Random Forest? Why?
+  \end{quote}
+
+  \begin{enumerate}
+  \def\labelenumii{\alph{enumii}.}
+  \item
+    \begin{quote}
+    No answer/wrong answer - 0
+    \end{quote}
+  \item
+    \begin{quote}
+    Barely there: (No reasoning/discussion) - 50\%
+    \end{quote}
+  \item
+    \begin{quote}
+    Chooses an IG and gives a reasonable explanation as to why - 100\%
+    \end{quote}
+  \end{enumerate}
+\item
+  \begin{quote}
+  \textcolor{red}{(5 points) What did you do to account for missing data?}
+  \end{quote}
+
+  \begin{enumerate}
+  \def\labelenumii{\alph{enumii}.}
+  \item
+    \begin{quote}
+    \textcolor{red}{No answer/wrong answer - 0}
+    \end{quote}
+  \item
+    \begin{quote}
+    \textcolor{red}{Barely there: (No reasoning/discussion) - 50\%}
+    \end{quote}
+  \item
+    \begin{quote}
+    Describes a method and gives an explanation as to why. - 100\%
+    \end{quote}
+  \end{enumerate}
+\item
+  \begin{quote}
+  (5 points) What did you do to account for numerical features?
+  \end{quote}
+
+  \begin{enumerate}
+  \def\labelenumii{\alph{enumii}.}
+  \item
+    \begin{quote}
+    No answer/wrong answer - 0
+    \end{quote}
+  \item
+    \begin{quote}
+    Barely there: (No reasoning/discussion) - 50\%
+    \end{quote}
+  \item
+    \begin{quote}
+    Describes a method and gives an explanation as to why. - 100\%
+    \end{quote}
+  \end{enumerate}
+\item
+  \begin{quote}
+  (10 points) What did you do to account for class imbalance?
+  \end{quote}
+
+  \begin{enumerate}
+  \def\labelenumii{\alph{enumii}.}
+  \item
+    \begin{quote}
+    No answer/wrong answer - 0
+    \end{quote}
+  \item
+    \begin{quote}
+    Barely there: (No reasoning/discussion) - 50\%
+    \end{quote}
+  \item
+    \begin{quote}
+    Describes a method and gives an explanation as to why. - 100\%
+    \end{quote}
+  \end{enumerate}
+\item
+  \begin{quote}
+  (10 points) What other optimizations did you implement to improve
+  either accuracy or performance?
+  \end{quote}
+
+  \begin{enumerate}
+  \def\labelenumii{\alph{enumii}.}
+  \item
+    \begin{quote}
+    No answer/wrong answer - 0
+    \end{quote}
+  \item
+    \begin{quote}
+    Barely there: (No reasoning/discussion) - 50\%
+    \end{quote}
+  \item
+    \begin{quote}
+    Describes a method and gives an explanation as to why. - 70\%
+    \end{quote}
+  \item
+    \begin{quote}
+    Shows creativity and a rationale grounded in empirical research -
+    100\%
+    \end{quote}
+  \end{enumerate}
+\end{enumerate}
+
+\end{document}
