@@ -10,7 +10,7 @@
 
 \title{CS529 Project 1 Report - Group 15}
 \vspace{3cm}
-\author{%
+\author{
     \begin{tabular}[t]{c@{\hskip 2em}c} % Two columns with some space in between
         Behnoud Alaghband & Zhuoming Liu  \\
         University of New Mexico & University of New Mexico \\
@@ -74,7 +74,7 @@ Two strategies were applied in the training phase.
     \\For the record with a missing feature, we will assign it with the most common feature value from the rest of the dataset. This can keep our records as much as possible. And We won't waste those useful information from the records with missing values. Actually based on Table 1, we can simulate an extremely worst case -- one record has 7 missing feature values (card2 -card6, addr1, addr2). The rest 18 features contain useful information still.
 \end{enumerate}
 Among these 2 strategies, we prefer to use the $2^{nd}$ one.\\\\
-In testing phase, we are using a different strategy. We will try every possible values and gave predictions, among which we select the most frequent one as our final prediction. This is the same strategy we are using when the DT sees an un-seen feature value in training pahse.\\\\
+In validation phase, we are using a different strategy. We will try every possible values and gave predictions, among which we select the most frequent one as our final prediction. This is the same strategy we are using when the DT sees an un-seen feature value in training pahse.\\\\
 For example, given a tree and a to-be-predicted record (Fig 1). The root node of this DT is "ProductCD" with 4 sub-branches. Only branches "W" and "D" has a child-node "C1" and "card1" respectively. In the training phase, This DT only sees "5812", "4472" and "9633" for "card1" feature.\\\\  
 In the to-be-predicted record, the feature "ProductCD" is a missing value ("NaN"), "C1" is 50 and "card1" is "17399" (other features are ignored in this example). When the DT do the prediction, it will first scan the value of "ProductCD". Becasue it is "NaN", so it will travelse each sub-branch. 
 \begin{itemize}
@@ -98,12 +98,24 @@ In the end this DT predicts a list of potential values as [Fraud, Fraud, NotFrau
 \end{figure}
 
 
-\subsection{Numerical Data}
-\begin{verbatim}
-['C1', 'C10', 'C11', 'C12', 'C13', 'C14', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 
-'C8', 'C9', 'TransactionAmt', 'TransactionDT', 'isFraud']
-\end{verbatim}
+\subsection{Imbalanced data}
+The dataset has 96.5\% of \textbf{not Fraud} transaction records, which is a significantly imbalanced (Table 2). To guarantee that each DT has enough \textbf{Fraud} transaction records while we randomly select 80\% of data in the training phase, we first split our dataset into "positive" set (Fraud) and "negative" set (Not Fraud). Then we extract 80\% from both sets as our training set, and the left 20\% as our validation set (Fig 2). By doing so, the algorithm is able to see a certain number of "Fraud" data in training phase, and have enough "Fraud" data for the validation phase.
+\begin{table}[H]
+    \centering        
+    \begin{tabular}{r|r}
+        Target & Percentage (\%)\\\hline
+        Fraud& 3.50\\
+        not Fraud& 96.50\\
+    \end{tabular}
+    \caption{\label{tab:2} Imbalanced target}
+\end{table}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=1\linewidth]{Fig/Imblanced_data.jpeg}
+  \caption{\label{fig:2}Splitting data strategy}
+\end{figure}
 
+\section{Information Gain}
 we calculate information gain by Info-Gain function :
 
 \begin{algorithm}[H]
@@ -156,7 +168,7 @@ This function has two possible returns:
 \section{Discussion on the different values for $\alpha$ in chi square}
 
 $\alpha$ represents the significance level as the probability that a hypothesis is rejected when it is true. The common value for $\alpha$ is 0.05 which means if the probability of the value is less than 5\%, the null hypothesis is rejected and there is a statistical significance between the data that has been observed and frequencies that are expected. If $\alpha$ is 0.01, it means the probability that a true null hypothesis is rejected is decreased but otherwise, the probability that a false bull hypothesis is not being rejected increases. 
-In our project, we have $\alpha$ as 0.05 and we have chosen feature classes based on the unique value 
+In our project, we have $\alpha$ as 0.05 and we have chosen feature classes based on the unique value of split features in our dataframe. Then, we calculated degrees of freedom by multiplying number of feature classes (as row) -1 and target (isFraud or is not Fraud as columns) -1. 
 
 
 
