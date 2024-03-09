@@ -251,6 +251,28 @@ In our project, with alpha 0.05, we got 0.71 balanced accuracy.
 
 \section{Appendix}
 
-
+\begin{table}[H]
+    \centering        
+    \begin{tabular}{r|r|r|r}
+        Tree ID  & Missing value strategy & Tree location & Predict location (\%)\\\hline
+        Gini0 & Filter &71.81\\
+        Gini1 & Filter &71.02\\
+        Gini2 & Filter &53.48\\
+        Gini3 & Filter & 66.65\\
+        Gini4 & Filter & 58.45\\
+        Gini5 & Filter & Desktop & Laptop\\
+        Gini6 & Filter & Desktop & Laptop\\
+        Gini0 & Filter & Veyron & Veyron (HM1_RF_test)\\
+        Gini1 & Filter & Veyron & Veyron (HM1_RF_test)\\
+        Gini2 & Filter & Veyron & Veyron (HM1_RF_test)\\
+        Gini3 & Filter & Veyron & Veyron (HM1_RF_test copy)\\
+        Gini4 & Filter & Veyron & Veyron (HM1_RF_test copy)\\
+        Gini5 & Filter & Veyron & Veyron (HM1_RF_test copy)\\
+        Gini6 & Filter & Desktop & Laptop\\
+        
+        
+    \end{tabular}
+    \caption{Subset of trees' performance}
+\end{table}
 
 \end{document}
