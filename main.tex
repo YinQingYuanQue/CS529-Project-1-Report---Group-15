@@ -1,5 +1,6 @@
 \documentclass{article}
-\usepackage{graphicx} % Required for inserting images
+\usepackage{graphicx} 
+\usepackage{graphicx, subcaption}% Required for inserting images
 \usepackage[ruled,vlined]{algorithm2e}
 \usepackage{xcolor} % for colored text
 \usepackage{graphicx} % for including graphics
@@ -60,7 +61,7 @@ The dataset is a 472432 $\times$ 27 matrix, 472432 records and 27 features (colu
             TransactionDT&\checkmark &&461340 & 0\\
         \end{tabular}
     }
-    \caption{\label{tab:1} Data overview}
+    \caption{ Data overview}
 \end{table}
 'TransactionDT' has 461340 unique values in our dataset (Table 1), indicating 'TransactionDT' should not be used in the decision tree (DT). Same reason from Micheal's book, 'TransactionDT' can cause a highly over-fitting tree. In fact, 'TransactionDT' is the date of transaction, usually meaningless for determining whether the transaction is fraud or not. Although an organization is faking the transaction in a particular day may happen in some cases, we don't take that situation into consideration. We will ignore 'TransactionDT' when building our Random Forest (RF).
 
@@ -73,7 +74,7 @@ Two strategies were applied in the training phase.
     \item Simulate feature value
     \\For the record with a missing feature, we will assign it with the most common feature value from the rest of the dataset. This can keep our records as much as possible. And We won't waste those useful information from the records with missing values. Actually based on Table 1, we can simulate an extremely worst case -- one record has 7 missing feature values (card2 -card6, addr1, addr2). The rest 18 features contain useful information still.
 \end{enumerate}
-Among these 2 strategies, we prefer to use the $2^{nd}$ one.\\\\
+Although intuitively, I thought strategy 2 is the best choice, since it keeps as much records as possible. However, the results from experiments tell a different story (Table 3, \textcolor{red}{more explained in section} ). For the "Gini index", strategy 1 performed better than strategy 2. But for the "Entropy" and "Miss classification", strategy 2 did out-performed strategy 1 with more stable and higher balanced accuracy. Based on these experiments, we choose to use the strategy 1 to deal with missing value in training phase.\\\\
 In validation phase, we are using a different strategy. We will try every possible values and gave predictions, among which we select the most frequent one as our final prediction. This is the same strategy we are using when the DT sees an un-seen feature value in training pahse.\\\\
 For example, given a tree and a to-be-predicted record (Fig 1). The root node of this DT is "ProductCD" with 4 sub-branches. Only branches "W" and "D" has a child-node "C1" and "card1" respectively. In the training phase, This DT only sees "5812", "4472" and "9633" for "card1" feature.\\\\  
 In the to-be-predicted record, the feature "ProductCD" is a missing value ("NaN"), "C1" is 50 and "card1" is "17399" (other features are ignored in this example). When the DT do the prediction, it will first scan the value of "ProductCD". Becasue it is "NaN", so it will travelse each sub-branch. 
@@ -88,13 +89,14 @@ In the to-be-predicted record, the feature "ProductCD" is a missing value ("NaN"
         \item \textbf{sub-branch 4.3} $card1 = 9633 \rightarrow Target = NotFraud$
     \end{itemize}
 \end{itemize}
-Because this DT never sees the value of "card1 = 17399" in the training phase, it will travelse every possible values in sub-branch under the node "card1". \\\\
-In the end this DT predicts a list of potential values as [Fraud, Fraud, NotFraud, Fraud, NotFraud, NotFraud]. We have 3 "Fraud" and 3 "NotFraud". Because the number of times "Fraud" occurred was at least half, we assign the final prediction as "Fraud" ("NotFraud" less than half time).
+Because this DT never sees the value of "card1 = 17399" in the training phase, it will travels every possible values in sub-branch under the node "card1". \\\\
+In the end this DT predicts a list of potential values as [Fraud, Fraud, NotFraud, Fraud, NotFraud, NotFraud]. We have 3 "Fraud" and 3 "NotFraud". Because the number of times "Fraud" occurred was at least half, we assign the final prediction as "Fraud" ("NotFraud" less than half time).\\\\
+If we use the same strategy as "Simulate feature value", we are faking prior knowledge that the "NaN" = most frequency feature. This hypothesis can be false, resulting in wrong predictions. That's the reason that we want to scan the full potential feature space.
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=1\linewidth]{Fig/NaN_test.jpeg}
-  \caption{\label{fig:1}A demo of 1 DT and 1 record}
+  \includegraphics[width=1\linewidth]{Fig/NaN_test.jpg}
+  \caption{A demo of 1 DT and 1 record}
 \end{figure}
 
 
@@ -107,74 +109,147 @@ The dataset has 96.5\% of \textbf{not Fraud} transaction records, which is a sig
         Fraud& 3.50\\
         not Fraud& 96.50\\
     \end{tabular}
-    \caption{\label{tab:2} Imbalanced target}
+    \caption{Imbalanced target}
 \end{table}
+
 \begin{figure}[H]
   \centering
-  \includegraphics[width=1\linewidth]{Fig/Imblanced_data.jpeg}
-  \caption{\label{fig:2}Splitting data strategy}
+  \includegraphics[width=1\linewidth]{Fig/Imblanced_data.jpg}
+  \caption{Splitting data strategy}
 \end{figure}
 
-\section{Information Gain}
-we calculate information gain by Info-Gain function :
-
-\begin{algorithm}[H]
-\SetAlgoLined
-\KwIn{Input\_Dataframe, Split\_feature, IG\_methods, Num\_Cat}
-\KwOut{Information Gain}
-\KwResult{Calculate Information Gain based on the given parameters}
-
-\SetKwFunction{InfoGain}{Info\_Gain}
-\SetKwProg{Fn}{Function}{:}{}
-
-\Fn{\InfoGain{Input\_Dataframe, Split\_feature, IG\_methods, Num\_Cat}}{
-    % Function body
-}
-
-\caption{Info\_Gain function}
-\end{algorithm}
-
-\textbf{Information gain function}
-
-\begin{center}
-\begin{tabular}{|c|c|p{7cm}|}
-\hline
-\textbf{Input Variable} & \textbf{Type} & \textbf{Definition} \\
-\hline
-\textcolor{green}{Input\_Dataframe} & \texttt{pandas.DataFrame} & This is your chosen subset of training data \\
-\textcolor{green}{Split\_feature} & \texttt{String} & The chosen feature for calculating Information gain \\
-\textcolor{green}{IG\_methods} & \texttt{String} & Three options: \textcolor{red}{Gini} for Gini index, \textcolor{red}{Entropy} for Max Entropy, \textcolor{red}{MisEr} for Miss classification\\
-\textcolor{green}{Num\_Cat} & \texttt{String} & Two options: \textcolor{red}{Num} for a numeric feature, \textcolor{red}{Cat} for a categorical feature \\
-\hline
-\end{tabular}
-\end{center}
-
-This function has two possible returns: 
-
-\begin{itemize}
-    \item \textcolor{red}{[IG\_feature, Split point]}: if \textcolor{green}{Split\_feature} is a \textbf{numeric} feature
-        \begin{itemize}
-            \item \textbf{IG\_feature}: single float variable representing \textbf{Information Gain} of \textcolor{green}{Split\_feature}
-            \item \textbf{Split point}: single float variable, the best binary split point for this numeric feature \textcolor{green}{Split\_feature}
-        \end{itemize}
-    \item \textcolor{red}{[IG\_feature, -3.14]}: if \textcolor{green}{Split\_feature} is a \textbf{categorical} feature
-        \begin{itemize}
-            \item \textbf{IG\_feature}: same as previous
-            \item \textbf{-3.14}: Meaningless, and not to be used in the future. Just to make this function work recursively.
-        \end{itemize}
-\end{itemize}
-
-
-\section{Discussion on the different values for $\alpha$ in chi square}
-
-$\alpha$ represents the significance level as the probability that a hypothesis is rejected when it is true. The common value for $\alpha$ is 0.05 which means if the probability of the value is less than 5\%, the null hypothesis is rejected and there is a statistical significance between the data that has been observed and frequencies that are expected. If $\alpha$ is 0.01, it means the probability that a true null hypothesis is rejected is decreased but otherwise, the probability that a false bull hypothesis is not being rejected increases. 
-In our project, we have $\alpha$ as 0.05 and we have chosen feature classes based on the unique value of split features in our dataframe. Then, we calculated degrees of freedom by multiplying number of feature classes (as row) -1 and target (isFraud or is not Fraud as columns) -1. 
 
 
 
-\section{Discussion wrt design decisions for: missing data, numerical features, class imbalance}
-\section{Interpreting the results and provides insights into the various model performance}
-\section{Insights into the relationship between features and the target variable}
+
+\section{Building a Tree}
+\subsection{Information Gain Methods}
+How to use information gain to build a tree has been discussed thoroughly in the class and from Micheal's book, we will not further discuss on it. In this report, we will focus on the experiments' results.\\\\
+There are 3 information gain methods, 2 strategies dealing with missing values (Section 1.2). In total there are $3\times2 = 6$ combinations. For each combination, we did at least 9 experiments.\\\\ 
+A subset balanced accuracy is shown in Table 3. For example, "MisEr3, Simulate, 67.81", means that this tree is using miss classification Information Gain method, and strategy 2 (Section 1.2) to deal with missing values in training phase. In the end, the validation balanced accuracy is 67.81\%.\\\\
+
+
+\begin{table}[H]
+    \centering        
+    \begin{tabular}{r|r|r}
+        Tree ID  & Missing value strategy & Balanced Accuracy (\%)\\\hline
+        Gini0 & Filter &71.81\\
+        Gini1 & Filter &71.02\\
+        Gini2 & Filter &53.48\\\hline
+        Gini3 & Simulate & 66.65\\
+        Gini4 & Simulate & 58.45\\
+        Gini5 & Simulate & 66.24\\\hline\hline
+        Entropy0 & Filter & 57.25 \\
+        Entropy1 & Filter & 65.24\\
+        Entropy2 & Filter & 55.92\\\hline
+        Entropy3 & Simulate & 67.86\\
+        Entropy4 & Simulate & 63.00\\
+        Entropy5 & Simulate & 58.62\\\hline\hline
+        MisEr0 & Filter & 64.51\\
+        MisEr1 & Filter & 50.93\\
+        MisEr2 & Filter & 64.15\\\hline
+        MisEr3 & Simulate & 67.81\\
+        MisEr4 & Simulate & 68.68\\
+        MisEr5 & Simulate & 66.71\\\hline\hline
+        
+    \end{tabular}
+    \caption{Subset of trees' performance}
+\end{table}
+
+\begin{figure}[H]
+  \centering
+
+  \begin{subfigure}[t]{.45\linewidth}
+    \centering\includegraphics[width=1\linewidth]{Fig/Gini, Filter.png}
+    \caption{Gini, Filter}
+  \end{subfigure}
+  \begin{subfigure}[t]{.45\linewidth}
+    \centering\includegraphics[width=1\linewidth]{Fig/Gini, Simulate.png}
+    \caption{Gini, Simulate}
+  \end{subfigure}\\
+
+    \begin{subfigure}[t]{.45\linewidth}
+    \centering\includegraphics[width=1\linewidth]{Fig/Entropy, Filter.png}
+    \caption{Entropy, Filter}
+  \end{subfigure}
+  \begin{subfigure}[t]{.45\linewidth}
+    \centering\includegraphics[width=1\linewidth]{Fig/Entropy, Simulate.png}
+    \caption{Entropy, Simulate}
+  \end{subfigure}\\
+
+  \begin{subfigure}[t]{.45\linewidth}
+    \centering\includegraphics[width=1\linewidth]{Fig/MisEr, Filter.png}
+    \caption{Miss classification, Filter}
+  \end{subfigure}
+  \begin{subfigure}[t]{.45\linewidth}
+    \centering\includegraphics[width=1\linewidth]{Fig/MisEr, Simulate.png}
+    \caption{Miss classification, Simulate}
+  \end{subfigure}\\
+  
+  \caption{Histogram of Bal-Acc for each combination}
+\end{figure}
+The full experiments results is shown in Figure 3, using histograms. After the vertical comparison, Miss Classification is the least stable method for producing $\geq$0.6 balanced accuracy  trees, while Gini is the most stable one. The most interesting phenomenon is that using simulating data indeed increase the DT performance using Entropy or Miss Classification methods. But it will significantly decrease the balanced accuracy for Gini method. The reason is not discovered yet due to the time limit. \\\\
+From these experiments, Random Forest is using "Gini" and "Filter" combination to generate trees. Also, from Figure 3. (a), the balanced accuracy of a single tree is roughly 0.7. If we want to have a 0.9 balanced accuracy for the final Random Forest, number of trees \textbf{n} should ensure:\\
+${n\choose \frac{n}{2}}\times(1-0.7)^n \leq 0.1 \rightarrow n\geq 3$.\\
+Since, we have already built 10+ trees with "Gini" and "Filter" combinations using random features and random 80\% records (following the strategy in Section 1.3), we will use all those trees whose balanced accuracy is greater than 0.65 for the Random Forest.\\\\
+To test different method's influence to tree structure, we only used the same subset from the whole dataset and all features to do experiments. The strategy of dealing with missing data is also same for all three trees. \\\\
+Figure 4 gives out the tree structure. Because some nodes have too many sub-branches ($>100$, \textbf{\# of Unique values} in Table 1), it's hard to plot the trees. Therefore, a Pandas DataFrame (df) is used to show the structure. \\\\
+For example, Figure 4.(a) is a tree using Gini method. The root node of this tree is "card1" (Depth == 0). The root node's $1^{st}$-born child nodes are listed in Child\_Columns. For the $2^{nd}$ record (index is 1), this node's feature is 'ProductCD' (Column\_name), its parent node is 'card1' (Parent\_Col). This node is linked to the parent node by the edge 1008 (Parent\_Branch). Under this node, the Chi-Square test failed, hence this node has a Target value 0 and no child nodes (Child\_Columns is empty meaning that there is no edges coming out from this node). Whenever a record goes in this sub-branch, it will be assigned as "NotFraud" (Target == 0). \\\\
+Figure 4.(b) is a tree using Entropy method. The root node of this tree is "addr1". For the $2^{nd}$ record, this node's feature is also "ProductCD", its parent node is "addr1". This node is linked to the parent node by the edge 100. Under this node, the Chi-Square test failed and the Target value is 0. For the $3^{rd}$ record, this node's feature is 'card1', its parent node is "addr1". This node is linked to the parent node by the edge 110. Under this node, the Chi-Square test failed and the Target value is 0. These 3 nodes together form 2 logic rules:\\
+\textbf{Rule 1:} $addr1 == 100 \land ProductCD == C \rightarrow Target =NotFraud$\\
+\textbf{Rule 2:} $addr1 == 110 \land card1 \in [1589,1726,2249,2803,3479,4812,7508,...] \rightarrow Target = NotFraud$\\
+For the $4^{th}$ record, it is "ProductCD" again, its parent is "addr1", but this node is linked to the edge 122. And it passed Chi-Square test, therefore it has child nodes. But notice here, that its 3 sub-childs are its branches ([H,R,W]). Figure 4.(c) gives out these three child nodes' information. These 3 child nodes create additional logic rules:\\ 
+\textbf{Rule 3:} $addr1 == 122 \land ProductCD == H \rightarrow Target =Fraud$\\
+\textbf{Rule 4:} $addr1 == 122 \land ProductCD == R \rightarrow Target = NotFraud$\\
+\textbf{Rule 5:} $addr1 == 122 \land ProductCD == W \rightarrow Target = NotFraud$\\\\
+
+\begin{figure}[H]
+  \centering
+
+  \begin{subfigure}[t]{.9\linewidth}
+    \centering\includegraphics[width=1\linewidth]{Fig/Gini.png}
+    \caption{Gini Tree}
+  \end{subfigure}\\
+  
+  \begin{subfigure}[t]{.9\linewidth}
+    \centering\includegraphics[width=1\linewidth]{Fig/Entropy.png}
+    \caption{Entropy Tree}
+  \end{subfigure}
+  \begin{subfigure}[t]{.7\linewidth}
+    \centering\includegraphics[width=1\linewidth]{Fig/Entropy_Sub.png}
+    \caption{Entropy sub-Tree}
+  \end{subfigure}
+  \\
+
+    \begin{subfigure}[t]{.9\linewidth}
+    \centering\includegraphics[width=1\linewidth]{Fig/MisEr.png}
+    \caption{MisEr Tree}
+  \end{subfigure}
+  
+  
+  \caption{Different trees with different methods}
+\end{figure}
+In general, that's the structure of 3 trees using 3 different Information Gain methods. Only using the table view, we can tell the difference among these trees' structures. Miss Classification generate trees with least amount of nodes (166). Gini index has greatest amount of nodes. Their height are all 3 (although I set the Max-Depth = 5). We can also tell that Gini's tree is wider compared to the others. This difference is caused by different ways of calculating Information Gain. Actually, Gini index choose \textbf{card1} as the root node, Entropy choose \textbf{addr1}, while Miss Classification choose \text{card3}. From Table 1, we \textbf{card1} has significantly larger sub-branches. 
+
+
+
+\subsection{$\alpha$ value}
+
+To overcome In Chi-square test function, $\alpha$ value is used to overcome the overfitting 
+
+
+
+
+\section{Save a DT to a DataFrame (DF)}
+
+
+
+In our project, with alpha 0.05, we got 0.71 balanced accuracy. 
+
+
+
+\section{Appendix}
+
 
 
 \end{document}
