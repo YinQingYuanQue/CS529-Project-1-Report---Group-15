@@ -229,14 +229,15 @@ For the $4^{th}$ record, it is "ProductCD" again, its parent is "addr1", but thi
   
   \caption{Different trees with different methods}
 \end{figure}
-In general, that's the structure of 3 trees using 3 different Information Gain methods. Only using the table view, we can tell the difference among these trees' structures. Miss Classification generate trees with least amount of nodes (166). Gini index has greatest amount of nodes. Their height are all 3 (although I set the Max-Depth = 5). We can also tell that Gini's tree is wider compared to the others. This difference is caused by different ways of calculating Information Gain. Actually, Gini index choose \textbf{card1} as the root node, Entropy choose \textbf{addr1}, while Miss Classification choose \text{card3}. From Table 1, we \textbf{card1} has significantly larger sub-branches. 
+In general, that's the structure of 3 trees using 3 different Information Gain methods. Only using the table view, we can tell the difference among these trees' structures. Miss Classification generate trees with least amount of nodes (166). Gini index has greatest amount of nodes. Their height are all 3 (although I set the Max-Depth = 5). We can also tell that Gini's tree is wider compared to the others. This difference is caused by different ways of calculating Information Gain. Actually, Gini index choose \textbf{card1} as the root node, Entropy choose \textbf{addr1}, while Miss Classification choose \text{card3}. From Table 1, \textbf{card1} has significantly larger sub-branches. Even though I let the Information Gain function to use the Gain-Ratio when it detect more than 200 sub-branches, \textbf{card1} still had the best Gain-Ratio for Gini index, but not for the other two. 
 
 
 
 \subsection{$\alpha$ value}
 
-To overcome In Chi-square test function, $\alpha$ value is used to overcome the overfitting 
-
+To overcome the over-fitting problem, Chi-square test is used whenever the DT trid to expand under one node. The $\alpha$ value affect the basic Chi-value (which value we choose from the Chi-Table). Because the degree of freedom under each node won't change, the basic Chi-value is only influence by the $\alpha$ we choose. With a higher $\alpha$, we have less confidence interval (1-$\alpha$), and a lower basic Chi-value. Let Chi-Node represent the Chi-square of our targeted node. When Chi-Node $>$ basic Chi-value, we said the node pass the Chi-square test, and let the tree keep growing under this node.\\\\
+From this process, we can tell that $\alpha$ value can affect the depth of the tree. And the depth of the tree affect the accuracy and over-fitting problem. Given the constraint that our tree's maximum depth = 5, and we have 25 features, it's reasonable to make a conclusion that the tree won't encounter over-fitting problem easily. Hence, we make a hypothesis here $h_0$: higher $\alpha \rightarrow$ lower balanced accuracy $\land$ deeper tree.\\\\
+An experiment is done using the same subset from the whole dataset, Gini index as Information Gain, strategy 1  (Section 1.2) to deal with missing values. results 
 
 
 
